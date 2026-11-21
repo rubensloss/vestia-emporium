@@ -1,0 +1,12 @@
+# Keep only ultra-fast mobile WebP cutouts + 6 thumbnails in public demo deploy
+img/cutouts/*.png
+img/store-bg.jpg
+img/logo-ig.jpg
+img/p00.jpg
+img/p02.jpg
+img/p05.jpg
+img/p07.jpg
+img/p08.jpg
+img/p09.jpg
+img/*_side.jpg
+img/*_back.jpg

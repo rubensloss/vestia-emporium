@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#14100d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Emporium 360°" />
+  <title>Emporium · Moda Feminina · Provador Virtual 360°</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=4" />
+</head>
+<body>
+  <!-- Full-Bleed Real Emporium Boutique Interior Backdrop (Always Store Scene) -->
+  <div class="store-backdrop" aria-hidden="true">
+    <img class="store-backdrop__img" src="img/store-bg.webp" alt="" />
+    <div class="store-backdrop__scrim"></div>
+    <div class="store-backdrop__aura" id="ambientPrimary"></div>
+  </div>
+
+  <!-- Top Floating Navigation Bar -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <div class="brand-emblem" aria-hidden="true">
+        <svg viewBox="0 0 44 38" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 4 L23.4 7 L22 10 L20.6 7 Z" fill="currentColor" stroke="none" />
+          <path d="M13 13 H31" />
+          <path d="M22 13 V32" />
+          <path d="M22 32 C14 32 9 26 9 19 H14 C18.5 19 22 23 22 28" />
+          <path d="M22 32 C30 32 35 26 35 19 H30 C25.5 19 22 23 22 28" />
+          <path d="M28 13 V21 C28 24.5 25.5 27 22 27" />
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">Emporium</span>
+        <span class="brand-meta">Moda Feminina</span>
+      </div>
+    </div>
+
+    <!-- Centered Floating Category Pill -->
+    <nav class="glass-pill category-nav" aria-label="Filtrar coleção">
+      <button class="cat-btn is-active" data-cat="all">Coleção</button>
+      <button class="cat-btn" data-cat="vestidos">Vestidos</button>
+      <button class="cat-btn" data-cat="conjuntos">Conjuntos</button>
+      <button class="cat-btn" data-cat="calcas">Calças</button>
+    </nav>
+
+    <!-- Right Quick Actions -->
+    <div class="topbar__actions">
+      <button class="glass-pill top-action-pill" id="btnTopMeasures" aria-label="Suas medidas">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+          <circle cx="10" cy="6.5" r="3" />
+          <path d="M4.5 16.5c.8-3 2.8-4.5 5.5-4.5s4.7 1.5 5.5 4.5" stroke-linecap="round" />
+        </svg>
+        <span id="topFitSummary">1,66m · M</span>
+      </button>
+
+      <button class="glass-pill top-action-pill top-action-pill--accent" id="btnTopPhoto" aria-label="Provar na minha foto">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.35">
+          <path d="M3.5 7.2a1.8 1.8 0 0 1 1.8-1.8h1.4l1-1.6h4.6l1 1.6h1.4a1.8 1.8 0 0 1 1.8 1.8v7.3a1.8 1.8 0 0 1-1.8 1.8H5.3a1.8 1.8 0 0 1-1.8-1.8V7.2Z" />
+          <circle cx="10" cy="10.8" r="2.7" />
+        </svg>
+        <span class="hide-xs">Minha Foto</span>
+      </button>
+
+      <button class="icon-circle glass-pill" id="btnFavorites" aria-label="Peças salvas" title="Peças salvas">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M10 16.4s-6-3.7-6-8.3A3.5 3.5 0 0 1 10 5.6a3.5 3.5 0 0 1 6 2.5c0 4.6-6 8.3-6 8.3Z" />
+        </svg>
+        <span class="fav-badge" id="favCount" hidden>0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Full-Bleed Spatial Fitting Room -->
+  <main class="fitting-canvas" id="fittingCanvas">
+    <!-- Slim Left Vertical Tool Rail (Desktop) -->
+    <aside class="tool-rail glass-panel" aria-label="Ferramentas do provador">
+      <button class="rail-btn is-active" id="railProfile" title="Perfil de caimento" aria-label="Perfil de caimento">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.35">
+          <path d="M4 5h12M4 10h8M4 15h10" stroke-linecap="round" />
+          <circle cx="15" cy="10" r="1.5" />
+        </svg>
+      </button>
+      <button class="rail-btn" id="railSpin" title="Giro automático 360° ida e volta" aria-label="Giro automático 360°">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.35">
+          <path d="M3.5 10a6.5 6.5 0 1 0 1.9-4.6" stroke-linecap="round" />
+          <path d="M3.5 5.5V9.5H7.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <button class="rail-btn" id="railPhoto" title="Provar na minha foto (LGPD)" aria-label="Provar na minha foto">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.35">
+          <path d="M3.5 7.2a1.8 1.8 0 0 1 1.8-1.8h1.4l1-1.6h4.6l1 1.6h1.4a1.8 1.8 0 0 1 1.8 1.8v7.3a1.8 1.8 0 0 1-1.8 1.8H5.3a1.8 1.8 0 0 1-1.8-1.8V7.2Z" />
+          <circle cx="10" cy="10.8" r="2.7" />
+        </svg>
+      </button>
+      <button class="rail-btn" id="railGuide" title="Tabela de medidas Emporium" aria-label="Tabela de medidas">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.35">
+          <rect x="3" y="6.5" width="14" height="7" rx="1.5" />
+          <path d="M6.5 6.5v2.6M10 6.5v3.5M13.5 6.5v2.6" stroke-linecap="round" />
+        </svg>
+      </button>
+    </aside>
+
+    <!-- Mobile Drawer Scrim (inside same stacking context, beneath #panelProfile) -->
+    <div class="drawer-scrim" id="drawerScrim" hidden></div>
+
+    <!-- Left Frosted Panel: Perfil de Caimento (Slide-up Drawer on Mobile) -->
+    <aside class="side-panel side-panel--left glass-panel" id="panelProfile">
+      <div class="drawer-handle" aria-hidden="true"></div>
+      <div class="panel-head">
+        <div>
+          <span class="panel-kicker">Perfil de Caimento</span>
+          <h2 class="panel-title">Suas Medidas</h2>
+        </div>
+        <button class="panel-close" id="closeProfileMobile" aria-label="Fechar medidas">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M5 5l10 10M15 5L5 15" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label-row">
+          <label for="heightSlider">Altura</label>
+          <strong class="metric-readout" id="heightValue">1,66 m</strong>
+        </div>
+        <input type="range" id="heightSlider" class="luxury-slider" min="150" max="184" value="166" step="1" />
+        <div class="slider-ticks">
+          <span>1,50m</span>
+          <span>1,67m</span>
+          <span>1,84m</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label-row">
+          <span>Manequim habitual</span>
+          <span class="subtle-hint" id="manequimNum">Tam. 40</span>
+        </div>
+        <div class="size-pills" id="manequimPills">
+          <button data-size="PP" data-num="36">PP</button>
+          <button data-size="P" data-num="38">P</button>
+          <button data-size="M" data-num="40" class="is-active">M</button>
+          <button data-size="G" data-num="42">G</button>
+          <button data-size="GG" data-num="44/46">GG</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label-row">
+          <span>Visualizar no corpo</span>
+        </div>
+        <div class="biotype-list" id="biotypeList">
+          <button class="biotype-opt is-active" data-bio="modelo">
+            <span class="bio-dot"></span>
+            <span class="bio-copy">
+              <strong>Modelo Emporium</strong>
+              <small>1,68m · Manequim P/M · Oficial</small>
+            </span>
+          </button>
+          <button class="biotype-opt" data-bio="petite">
+            <span class="bio-dot"></span>
+            <span class="bio-copy">
+              <strong>Biotipo Petite</strong>
+              <small>1,55m – 1,62m · PP/P</small>
+            </span>
+          </button>
+          <button class="biotype-opt" data-bio="curvy">
+            <span class="bio-dot"></span>
+            <span class="bio-copy">
+              <strong>Biotipo Curvy / Plus</strong>
+              <small>1,65m – 1,75m · G/GG</small>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="fit-note-card">
+        <div class="fit-note-card__top">
+          <span class="fit-badge" id="fitRecBadge">Tamanho ideal: M</span>
+          <button class="text-link" id="openSizeGuide">Tabela</button>
+        </div>
+        <p id="fitNoteText">Para 1,66 m e manequim 40, o M oferece caimento fluido na altura do tornozelo.</p>
+        <span class="sim-disclaimer">Simulação visual com IA · Medidas reais da loja</span>
+      </div>
+
+      <button class="try-own-photo-btn" id="btnOpenPhotoModal">
+        <span class="try-own-photo-btn__icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.35">
+            <path d="M3.5 7.2a1.8 1.8 0 0 1 1.8-1.8h1.4l1-1.6h4.6l1 1.6h1.4a1.8 1.8 0 0 1 1.8 1.8v7.3a1.8 1.8 0 0 1-1.8 1.8H5.3a1.8 1.8 0 0 1-1.8-1.8V7.2Z" />
+            <circle cx="10" cy="10.8" r="2.7" />
+          </svg>
+        </span>
+        <span class="try-own-photo-btn__text">
+          <strong>Provar na minha foto</strong>
+          <small>Simulação privada · LGPD</small>
+        </span>
+        <svg class="arrow-ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M3.5 8h9M9 4.5 12.5 8 9 11.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </aside>
+
+    <!-- CENTER STAGE: FREE-STANDING ("SOLTA") EMPORIUM MODEL DIRECTLY IN THE STORE -->
+    <section class="stage-center" id="stageCenter" aria-label="Modelo em 360 graus dentro da loja">
+      <div
+        class="model-free-stage"
+        id="modelStage"
+        role="region"
+        aria-label="Passe o mouse ou arraste sobre a modelo para girar 360 graus para ambos os lados"
+      >
+        <!-- Subtle Biotype indicator only when Petite/Curvy preview is active -->
+        <div class="biotype-banner" id="biotypeBanner" hidden>
+          <span id="biotypeBannerText">Proporção Petite · Na versão publicada, avatar dedicado com IA</span>
+        </div>
+
+        <!-- Frameless transparent cutout layers — ZERO border, ZERO box, ZERO card! -->
+        <div class="model-cutout-wrap" id="modelCutoutWrap">
+          <img id="modelImgFront" class="model-cutout model-cutout--front" src="img/cutouts/v1_000.webp?v=4" alt="Modelo Emporium vestindo Vestido Longo Terracota" />
+          <div class="atelier-aura-flash" id="atelierFlash" aria-hidden="true"></div>
+        </div>
+
+        <!-- Natural contact shadow grounding her heels directly on the Emporium store floor -->
+        <div class="floor-contact-shadow" aria-hidden="true"></div>
+
+        <!-- Delicate 360° Elliptical Floor Turntable Ring beneath her shoes -->
+        <div class="floor-turntable" id="floorTurntable">
+          <svg class="turntable-svg" viewBox="0 0 320 46" fill="none">
+            <ellipse cx="160" cy="23" rx="148" ry="16" stroke="rgba(250,246,239,0.28)" stroke-width="1.2" stroke-dasharray="3 5" />
+            <ellipse id="compassArc" cx="160" cy="23" rx="148" ry="16" stroke="#EBD2B5" stroke-width="2" stroke-linecap="round" stroke-dasharray="936" stroke-dashoffset="780" />
+          </svg>
+          <div class="turntable-controls glass-pill">
+            <button class="turn-dir-btn" id="btnTurnCCW" title="Girar para a esquerda" aria-label="Girar para a esquerda">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M10 3.5 5.5 8 10 12.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <button class="turn-status-btn" id="btnSpinBidirectional" title="Giro automático 360° ida e volta">
+              <svg class="spin-ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M2.8 8a5.2 5.2 0 1 0 1.5-3.7" stroke-linecap="round" />
+                <path d="M2.8 4.4v3.2H6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <strong id="angleDegText">0° · Frente</strong>
+            </button>
+            <button class="turn-dir-btn" id="btnTurnCW" title="Girar para a direita" aria-label="Girar para a direita">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M6 3.5 10.5 8 6 12.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+          <span class="turntable-hint" id="turntableHint">Passe o mouse para giro 360° · Arraste para controlar</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile-Only Thumb-Friendly Look Carousel Strip -->
+    <section class="mobile-look-strip" id="mobileLookStrip" aria-label="Escolher peça">
+      <!-- Populated dynamically by app.js -->
+    </section>
+
+    <!-- Right Frosted Panel: Coleção Emporium · 6 looks (Desktop) -->
+    <aside class="side-panel side-panel--right glass-panel" id="panelWardrobe">
+      <div class="panel-head">
+        <div>
+          <span class="panel-kicker">Coleção Emporium</span>
+          <h2 class="panel-title">Escolher Peça</h2>
+        </div>
+        <span class="count-tag" id="wardrobeCount">6 looks</span>
+      </div>
+
+      <div class="wardrobe-grid" id="wardrobeGrid">
+        <!-- Populated by app.js -->
+      </div>
+
+      <div class="wardrobe-footer">
+        <span>Toque numa peça para vestir e <strong>mova o mouse sobre a modelo</strong> para girar 360° para os dois lados.</span>
+      </div>
+    </aside>
+
+    <!-- Bottom Floating VisionOS Inspector Bar -->
+    <footer class="inspector-bar glass-panel" id="inspectorBar">
+      <div class="inspector-product">
+        <div class="inspector-thumb">
+          <img id="inspThumb" src="img/p01.jpg" alt="" />
+        </div>
+        <div class="inspector-copy">
+          <div class="inspector-title-row">
+            <h1 class="inspector-name" id="inspName">Vestido Longo Terracota</h1>
+            <button class="heart-btn" id="btnHeartActive" aria-label="Salvar nos favoritos">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.45">
+                <path d="M10 16.4s-6-3.7-6-8.3A3.5 3.5 0 0 1 10 5.6a3.5 3.5 0 0 1 6 2.5c0 4.6-6 8.3-6 8.3Z" />
+              </svg>
+            </button>
+          </div>
+          <div class="inspector-price-row">
+            <strong id="inspPrice">R$ 289,90</strong>
+            <span class="installment" id="inspInstallment">ou 3x de R$ 96,63</span>
+            <span class="color-chip">
+              <i class="swatch" id="inspSwatch" style="background:#B5683B"></i>
+              <span id="inspColorName">Terracota</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="inspector-divider" aria-hidden="true"></div>
+
+      <div class="inspector-sizing">
+        <div class="inspector-sizing__head">
+          <span>Tamanho</span>
+          <em id="inspRecTag">Sugerido para você: M</em>
+        </div>
+        <div class="inspector-sizes" id="inspSizes">
+          <!-- Populated by app.js -->
+        </div>
+      </div>
+
+      <div class="inspector-cta">
+        <a href="#" target="_blank" rel="noopener noreferrer" class="cta-whatsapp" id="btnWhatsapp">
+          <span>Quero essa</span>
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M3.5 9h11M10 4.5 14.5 9 10 13.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+        <span class="cta-micro">Envia peça e tamanho direto pro WhatsApp da loja</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Modal: Provar na Minha Foto (LGPD + Plano Exclusivo) -->
+  <div class="modal-backdrop" id="photoModal" hidden>
+    <div class="modal-card glass-panel" role="dialog" aria-modal="true" aria-labelledby="photoModalTitle">
+      <button class="modal-close" data-close="photoModal" aria-label="Fechar">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M5 5l10 10M15 5L5 15" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      <span class="panel-kicker">Experiência Exclusiva</span>
+      <h2 class="modal-title" id="photoModalTitle">Provar na sua própria foto</h2>
+      <p class="modal-sub">Envie uma foto sua de frente com boa iluminação. A IA veste a peça escolhida mantendo seu rosto, pose e proporções.</p>
+
+      <label class="lgpd-box">
+        <input type="checkbox" id="lgpdCheck" />
+        <span>
+          <strong>Privacidade &amp; LGPD:</strong> autorizo o uso temporário desta imagem apenas para gerar a simulação visual. A foto é <strong>excluída automaticamente</strong> logo após o uso e nunca é armazenada ou compartilhada.
+        </span>
+      </label>
+
+      <div class="upload-zone is-locked" id="uploadZone">
+        <input type="file" id="userPhotoInput" accept="image/*" hidden disabled />
+        <div class="upload-placeholder" id="uploadPlaceholder">
+          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.2">
+            <rect x="4" y="6" width="20" height="16" rx="3" />
+            <circle cx="11" cy="12" r="2" />
+            <path d="M4 19l5.5-5 4 3.5 3.5-3 7 6.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <strong>Selecione uma foto de corpo inteiro</strong>
+          <small id="uploadHint">Marque o aceite LGPD acima para liberar o envio</small>
+        </div>
+
+        <div class="upload-preview" id="uploadPreview" hidden>
+          <img id="userPreviewImg" src="img/p01.jpg" alt="Sua foto" />
+          <div class="upload-preview__info">
+            <span class="sim-pill"><i class="pulse-dot"></i> Foto pronta para simulação</span>
+            <p>No <strong>Plano Exclusivo</strong>, o motor <em>Google Virtual Try-On</em> veste <strong id="modalActiveGarment">Vestido Longo Terracota</strong> nesta foto em ~8 segundos.</p>
+            <div class="upload-preview__actions">
+              <button class="btn-champagne" id="btnSimulateUserTryOn">Simular caimento agora</button>
+              <button class="btn-ghost-sm" id="btnClearPhoto">Remover foto</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tryon-progress" id="tryonProgress" hidden>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <span id="progressLabel">Mapeando silhueta e iluminação...</span>
+      </div>
+
+      <div class="tryon-demo-result" id="tryonDemoResult" hidden>
+        <p><strong>Demonstração concluída:</strong> sua foto foi descartada da memória temporária. No plano Exclusivo publicado, o resultado real aparece diretamente dentro do provador da loja.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Tabela de Medidas Emporium -->
+  <div class="modal-backdrop" id="guideModal" hidden>
+    <div class="modal-card glass-panel" role="dialog" aria-modal="true" aria-labelledby="guideModalTitle">
+      <button class="modal-close" data-close="guideModal" aria-label="Fechar">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M5 5l10 10M15 5L5 15" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      <span class="panel-kicker">Guia de Caimento</span>
+      <h2 class="modal-title" id="guideModalTitle">Tabela de Medidas · Emporium</h2>
+      <p class="modal-sub">A simulação visual mostra o estilo e a cor da peça; a recomendação de tamanho cruza sua altura e manequim com a modelagem real da loja.</p>
+
+      <div class="size-table-wrap">
+        <table class="size-table">
+          <thead>
+            <tr>
+              <th>Tam.</th>
+              <th>Manequim</th>
+              <th>Busto (cm)</th>
+              <th>Cintura (cm)</th>
+              <th>Quadril (cm)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-row="PP"><td>PP</td><td>36</td><td>82 – 86</td><td>64 – 68</td><td>90 – 94</td></tr>
+            <tr data-row="P"><td>P</td><td>38</td><td>87 – 91</td><td>69 – 73</td><td>95 – 99</td></tr>
+            <tr data-row="M"><td>M</td><td>40</td><td>92 – 96</td><td>74 – 78</td><td>100 – 104</td></tr>
+            <tr data-row="G"><td>G</td><td>42</td><td>97 – 102</td><td>79 – 84</td><td>105 – 110</td></tr>
+            <tr data-row="GG"><td>GG</td><td>44 – 46</td><td>103 – 110</td><td>85 – 92</td><td>111 – 118</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="modal-footnote">Dúvida entre dois tamanhos? Toque em <strong>Quero essa</strong> e a equipe da Emporium confirma a modelagem exata no WhatsApp.</p>
+    </div>
+  </div>
+
+  <!-- Toast feedback -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js?v=4"></script>
+</body>
+</html>
