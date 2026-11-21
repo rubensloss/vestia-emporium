@@ -173,13 +173,16 @@
     targetDeg: 0,
     renderedIndex: 0,
     autoMode: 'idle', // 'idle' | 'cw' | 'pause' | 'ccw'
+    autoNextDir: 'cw',
     autoProgress: 0,
     autoPauseUntil: 0,
     autoPinned: false, // true when explicitly toggled via button/click
     isHoveringStage: false,
     isDragging: false,
+    dragPointerId: null,
     dragStartX: 0,
     dragLastX: 0,
+    dragVelocity: 0,
     dragMoved: false,
     lastFrameTime: 0,
     selectedSize: 'M',
@@ -319,13 +322,35 @@
     dom.compassArc.style.strokeDashoffset = String(offset);
   }
 
+  function applyKinetic3D(look, deg, idx) {
+    // Continuous sub-angle kinetic 3D perspective turn between frames:
+    // eliminates rigid freeze-and-snap "trancos" while keeping 100% single-figure crispness!
+    const n = look.angles.length;
+    const step = 360 / n;
+    const slotCenter = idx * step;
+    let delta = normDeg(deg) - slotCenter;
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+
+    // Normalize phase t in [-1, 1] across each angle slot
+    const t = Math.max(-1, Math.min(1, delta / (step * 0.5)));
+    // Gentle perspective turn (max +-10deg on 8-angle hero, +-14deg on 4-angle looks)
+    const maxTilt = n >= 8 ? 10.5 : 14.5;
+    const rotY = (-t * maxTilt).toFixed(2);
+    // Subtle natural breathing/weight shift scale at transition midpoint
+    const scaleX = (1 - Math.abs(t) * 0.018).toFixed(4);
+    dom.modelImgFront.style.transform = `rotateY(${rotY}deg) scaleX(${scaleX})`;
+  }
+
   function startBidirectionalShowcase({ pinned = false } = {}) {
     state.autoMode = 'cw';
+    state.autoNextDir = 'ccw';
     state.autoProgress = 0;
     state.autoPinned = pinned;
+    state.dragVelocity = 0;
     dom.btnSpinBidirectional.classList.add('is-active');
     dom.railSpin.classList.add('is-active');
-    dom.turntableHint.textContent = 'Girando 360° suave (ida e volta) · Arraste para pausar';
+    dom.turntableHint.textContent = 'Girando 360° suave · Arraste para controlar';
   }
 
   function stopBidirectionalShowcase() {
@@ -337,24 +362,29 @@
   }
 
   function tickTurntable(now) {
-    const dt = state.lastFrameTime ? Math.min(50, now - state.lastFrameTime) : 16.67;
+    const dt = state.lastFrameTime ? Math.min(48, now - state.lastFrameTime) : 16.67;
     state.lastFrameTime = now;
     const look = getActiveLook();
 
-    // Calm, unhurried luxury runway speed: ~52 deg/sec (~6.9s for full 360° right, pause, ~6.9s 360° left)
-    const autoSpeed = (52 * dt) / 1000;
+    // Fluid continuous runway rhythm: faster through side transitions so 8 angles blend organically,
+    // slowing smoothly ONLY when presenting Frente (0°) & Costas (180°) — zero robotic slideshow feel!
+    const rad = (normDeg(state.currentDeg) * Math.PI) / 180;
+    const organicPace = 0.62 + 0.72 * Math.abs(Math.sin(rad));
+    const baseSpeed = look.angles.length >= 8 ? 88 : 68;
+    const autoSpeed = (baseSpeed * organicPace * dt) / 1000;
 
     if (state.autoMode === 'cw') {
       state.targetDeg += autoSpeed;
       state.autoProgress += autoSpeed;
       if (state.autoProgress >= 360) {
         state.autoProgress = 0;
+        state.autoNextDir = 'ccw';
         state.autoMode = 'pause';
-        state.autoPauseUntil = now + 750;
+        state.autoPauseUntil = now + 620;
       }
     } else if (state.autoMode === 'pause') {
       if (now >= state.autoPauseUntil) {
-        state.autoMode = 'ccw';
+        state.autoMode = state.autoNextDir;
         state.autoProgress = 0;
       }
     } else if (state.autoMode === 'ccw') {
@@ -362,21 +392,21 @@
       state.autoProgress += autoSpeed;
       if (state.autoProgress >= 360) {
         state.autoProgress = 0;
+        state.autoNextDir = 'cw';
         state.autoMode = 'pause';
-        state.autoPauseUntil = now + 750;
-        // Alternate back to CW next
-        setTimeout(() => {
-          if (state.autoMode === 'pause') {
-            state.autoMode = 'cw';
-          }
-        }, 760);
+        state.autoPauseUntil = now + 620;
       }
+    } else if (!state.isDragging && Math.abs(state.dragVelocity) > 0.02) {
+      // Silky inertial coast after releasing finger/mouse drag
+      state.targetDeg += state.dragVelocity * (dt / 16.67);
+      state.dragVelocity *= Math.pow(0.92, dt / 16.67);
+      if (Math.abs(state.dragVelocity) <= 0.02) state.dragVelocity = 0;
     }
 
-    // Silky, calm damping (zero twitchiness on laptop touchpads!)
+    // Silky spring follow toward targetDeg
     const diff = state.targetDeg - state.currentDeg;
-    if (Math.abs(diff) > 0.04) {
-      state.currentDeg += diff * 0.12;
+    if (Math.abs(diff) > 0.02) {
+      state.currentDeg += diff * (state.isDragging ? 0.30 : 0.16);
     } else {
       state.currentDeg = state.targetDeg;
     }
@@ -386,19 +416,21 @@
       applySingleFigureFrame(look, idx);
     }
 
+    applyKinetic3D(look, state.currentDeg, idx);
     updateTurntableVisuals(look, state.currentDeg, idx);
     requestAnimationFrame(tickTurntable);
   }
 
   // ========================================================================
-  // Gentle Hover Auto-360° + Calm Low-Sensitivity Drag Control
+  // Gentle Hover Auto-360° + Zero-Friction Mobile Touch Drag with Inertia
   // ========================================================================
 
   function initModelInteraction() {
     const stage = dom.modelStage;
 
-    // Desktop: resting the mouse over the model smoothly starts automatic 360° CW ↔ CCW spin!
-    stage.addEventListener('mouseenter', () => {
+    // Desktop: resting the mouse over the model smoothly starts organic 360° CW ↔ CCW spin
+    stage.addEventListener('mouseenter', (e) => {
+      if (e.pointerType === 'touch') return;
       state.isHoveringStage = true;
       if (!state.isDragging && state.autoMode === 'idle') {
         startBidirectionalShowcase({ pinned: false });
@@ -412,21 +444,26 @@
       }
     });
 
-    // Calm, low-sensitivity drag (mouse click-drag on laptop OR finger swipe on mobile)
+    // Zero-friction pointer capture on Mobile & Desktop so the very first drag pixel responds smoothly!
     stage.addEventListener('pointerdown', (e) => {
       if (e.target.closest('.turntable-controls')) return;
       state.isDragging = true;
+      state.dragPointerId = e.pointerId;
       state.dragStartX = e.clientX;
       state.dragLastX = e.clientX;
+      state.dragVelocity = 0;
       state.dragMoved = false;
+      try {
+        stage.setPointerCapture(e.pointerId);
+      } catch (_) {}
     });
 
-    window.addEventListener('pointermove', (e) => {
-      if (!state.isDragging) return;
+    stage.addEventListener('pointermove', (e) => {
+      if (!state.isDragging || e.pointerId !== state.dragPointerId) return;
       const dx = e.clientX - state.dragLastX;
       state.dragLastX = e.clientX;
 
-      if (Math.abs(e.clientX - state.dragStartX) > 6) {
+      if (!state.dragMoved && Math.abs(e.clientX - state.dragStartX) > 3) {
         state.dragMoved = true;
         if (state.autoMode !== 'idle') {
           stopBidirectionalShowcase();
@@ -434,18 +471,26 @@
       }
 
       if (state.dragMoved) {
-        // Gentle, controlled sensitivity (calm on laptop touchpad & phone screen!)
-        const degPerPx = e.pointerType === 'touch' ? 0.58 : 0.42;
-        state.targetDeg += dx * degPerPx;
+        const degPerPx = e.pointerType === 'touch' ? 0.68 : 0.45;
+        const deltaDeg = dx * degPerPx;
+        state.targetDeg += deltaDeg;
+        state.dragVelocity = state.dragVelocity * 0.4 + deltaDeg * 0.6;
       }
     });
 
-    window.addEventListener('pointerup', () => {
-      if (!state.isDragging) return;
+    const endDrag = (e) => {
+      if (!state.isDragging || e.pointerId !== state.dragPointerId) return;
       state.isDragging = false;
-    });
+      state.dragPointerId = null;
+      try {
+        stage.releasePointerCapture(e.pointerId);
+      } catch (_) {}
+    };
 
-    // Clicking / tapping directly on the model toggles pinned 360° CW ↔ CCW showcase
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+
+    // Tapping directly on the model toggles organic 360° CW ↔ CCW showcase
     stage.addEventListener('click', (e) => {
       if (e.target.closest('.turntable-controls')) return;
       if (state.dragMoved) {

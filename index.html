@@ -11,14 +11,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body>
-  <!-- Full-Bleed Real Emporium Boutique Interior Backdrop (Always Store Scene) -->
+  <!-- Warm Editorial Cyclorama Studio Backdrop (Infinite Luxury Fashion Studio — Zero Perspective Clash) -->
   <div class="store-backdrop" aria-hidden="true">
-    <img class="store-backdrop__img" src="img/store-bg.webp" alt="" />
-    <div class="store-backdrop__scrim"></div>
+    <div class="cyclorama-wall"></div>
+    <div class="cyclorama-floor"></div>
+    <div class="cyclorama-keylight"></div>
     <div class="store-backdrop__aura" id="ambientPrimary"></div>
+    <div class="cyclorama-grain"></div>
   </div>
 
   <!-- Top Floating Navigation Bar -->
@@ -224,8 +226,11 @@
           <div class="atelier-aura-flash" id="atelierFlash" aria-hidden="true"></div>
         </div>
 
-        <!-- Natural contact shadow grounding her heels directly on the Emporium store floor -->
-        <div class="floor-contact-shadow" aria-hidden="true"></div>
+        <!-- Natural dual-layer contact shadow grounding her heels directly on the Emporium porcelain floor -->
+        <div class="floor-contact-shadow" aria-hidden="true">
+          <span class="shadow-core"></span>
+          <span class="shadow-ambient"></span>
+        </div>
 
         <!-- Delicate 360° Elliptical Floor Turntable Ring beneath her shoes -->
         <div class="floor-turntable" id="floorTurntable">
@@ -281,7 +286,7 @@
       </div>
     </aside>
 
-    <!-- Bottom Floating VisionOS Inspector Bar -->
+    <!-- Bottom Floating VisionOS Inspector Bar (Compact Luxury Pill) -->
     <footer class="inspector-bar glass-panel" id="inspectorBar">
       <div class="inspector-product">
         <div class="inspector-thumb">
@@ -309,24 +314,25 @@
 
       <div class="inspector-divider" aria-hidden="true"></div>
 
-      <div class="inspector-sizing">
-        <div class="inspector-sizing__head">
-          <span>Tamanho</span>
-          <em id="inspRecTag">Sugerido para você: M</em>
+      <div class="inspector-bottom-row">
+        <div class="inspector-sizing">
+          <div class="inspector-sizing__head">
+            <span>Tam.</span>
+            <em id="inspRecTag">Ideal: M</em>
+          </div>
+          <div class="inspector-sizes" id="inspSizes">
+            <!-- Populated by app.js -->
+          </div>
         </div>
-        <div class="inspector-sizes" id="inspSizes">
-          <!-- Populated by app.js -->
-        </div>
-      </div>
 
-      <div class="inspector-cta">
-        <a href="#" target="_blank" rel="noopener noreferrer" class="cta-whatsapp" id="btnWhatsapp">
-          <span>Quero essa</span>
-          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path d="M3.5 9h11M10 4.5 14.5 9 10 13.5" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </a>
-        <span class="cta-micro">Envia peça e tamanho direto pro WhatsApp da loja</span>
+        <div class="inspector-cta">
+          <a href="#" target="_blank" rel="noopener noreferrer" class="cta-whatsapp" id="btnWhatsapp">
+            <span>Quero essa</span>
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M3.5 9h11M10 4.5 14.5 9 10 13.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        </div>
       </div>
     </footer>
   </main>
@@ -427,6 +433,6 @@
   <!-- Toast feedback -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

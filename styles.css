@@ -72,7 +72,9 @@ img {
 }
 
 /* ==========================================================================
-   Full-Bleed Real Emporium Boutique Interior Backdrop (Always Store Scene)
+   Warm Limestone / Sand Editorial Cyclorama Studio Backdrop
+   High-fashion infinite studio curve (Zara Atelier / Jacquemus / Dior aesthetic)
+   Zero mismatched tiles or perspective clash · Adapts to any store's palette
    ========================================================================== */
 
 .store-backdrop {
@@ -81,24 +83,37 @@ img {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  background: #ded6ca;
 }
 
-.store-backdrop__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 48%;
-  transform: scale(1.015);
-  filter: blur(0.8px) brightness(0.86) saturate(1.04);
-}
-
-/* Warm architectural edge framing — center showroom stays bright and clear for the free-standing model */
-.store-backdrop__scrim {
+/* Soft infinite curved studio wall */
+.cyclorama-wall {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 52% 68% at 50% 48%, rgba(255, 248, 238, 0.04) 0%, rgba(20, 15, 12, 0.30) 64%, rgba(12, 9, 7, 0.62) 100%),
-    linear-gradient(180deg, rgba(16, 12, 9, 0.44) 0%, transparent 18%, transparent 78%, rgba(14, 10, 8, 0.56) 100%);
+    radial-gradient(ellipse 72% 62% at 50% 34%, #f4efe7 0%, #e7dfd4 48%, #d2c6b6 100%);
+}
+
+/* Seamless curved cyclorama studio floor sweep (gently grounded, zero grout lines!) */
+.cyclorama-floor {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: 0;
+  height: 36%;
+  background:
+    radial-gradient(ellipse 68% 95% at 50% 10%, rgba(246, 241, 234, 0.85) 0%, rgba(218, 207, 192, 0.92) 55%, rgba(190, 177, 160, 0.98) 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.55) 26%, black 55%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.55) 26%, black 55%);
+}
+
+/* Soft natural studio window key-light (zero dark bar at top — pure clean editorial studio!) */
+.cyclorama-keylight {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 56% 58% at 32% 18%, rgba(255, 253, 249, 0.56) 0%, transparent 68%),
+    radial-gradient(ellipse 76% 84% at 50% 48%, transparent 58%, rgba(86, 68, 52, 0.14) 100%);
 }
 
 .store-backdrop__aura {
@@ -106,13 +121,21 @@ img {
   width: 52vw;
   height: 52vh;
   left: 50%;
-  top: 48%;
+  top: 46%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, var(--accent-aura) 0%, transparent 70%);
-  filter: blur(95px);
-  opacity: 0.48;
+  background: radial-gradient(circle, var(--accent-aura) 0%, transparent 72%);
+  filter: blur(115px);
+  opacity: 0.28;
   transition: background 0.9s var(--ease-luxury);
+}
+
+.cyclorama-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.028;
+  background-image: radial-gradient(rgba(30, 22, 16, 0.65) 0.5px, transparent 0.5px);
+  background-size: 3px 3px;
 }
 
 /* ==========================================================================
@@ -120,19 +143,19 @@ img {
    ========================================================================== */
 
 .glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(30px) saturate(150%);
-  -webkit-backdrop-filter: blur(30px) saturate(150%);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-spatial), var(--glass-highlight);
+  background: rgba(24, 19, 15, 0.68);
+  backdrop-filter: blur(28px) saturate(145%);
+  -webkit-backdrop-filter: blur(28px) saturate(145%);
+  border: 1px solid rgba(255, 248, 240, 0.22);
+  box-shadow: 0 22px 52px rgba(22, 16, 12, 0.28), var(--glass-highlight);
 }
 
 .glass-pill {
-  background: rgba(20, 16, 13, 0.62);
-  backdrop-filter: blur(24px) saturate(145%);
-  -webkit-backdrop-filter: blur(24px) saturate(145%);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 12px 30px rgba(10, 7, 5, 0.28), var(--glass-highlight);
+  background: rgba(24, 19, 15, 0.70);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+  border: 1px solid rgba(255, 248, 240, 0.22);
+  box-shadow: 0 10px 26px rgba(22, 16, 12, 0.22), var(--glass-highlight);
   border-radius: 999px;
 }
 
@@ -162,11 +185,10 @@ img {
 .brand-emblem {
   width: 36px;
   height: 32px;
-  color: var(--champagne);
+  color: #2b221b;
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.45));
 }
 
 .brand-emblem svg {
@@ -177,25 +199,24 @@ img {
 .brand-text {
   display: flex;
   flex-direction: column;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
 }
 
 .brand-name {
   font-family: var(--serif);
   font-size: 27px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.03em;
   line-height: 0.96;
-  color: var(--ivory);
+  color: #231b15;
 }
 
 .brand-meta {
   font-size: 9.5px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--champagne);
+  color: #7c563f;
   margin-top: 4px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .category-nav {
@@ -732,9 +753,13 @@ img {
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding-bottom: 6px;
-  cursor: ew-resize;
-  touch-action: pan-y;
+  padding-bottom: 4px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.model-free-stage:active {
+  cursor: grabbing;
 }
 
 .biotype-banner {
@@ -757,13 +782,14 @@ img {
   display: none;
 }
 
-/* Frameless transparent PNG cutout container */
+/* Frameless transparent PNG cutout container with 3D kinetic perspective */
 .model-cutout-wrap {
   position: relative;
-  height: min(68vh, 640px);
+  height: min(74vh, 690px);
   aspect-ratio: 760 / 1240;
   z-index: 15;
   pointer-events: none;
+  perspective: 1150px;
   transition: transform 0.55s var(--ease-luxury);
 }
 
@@ -781,8 +807,8 @@ img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  /* Crisp single-figure rendering — subtle grounding shadow only, zero ghosting */
-  filter: drop-shadow(0 14px 20px rgba(14, 10, 7, 0.34));
+  /* Natural boutique daylight shadow — crisp, grounded, zero muddy halo */
+  filter: drop-shadow(0 8px 16px rgba(38, 28, 20, 0.16));
   will-change: opacity, transform;
 }
 
@@ -793,12 +819,12 @@ img {
 .model-cutout--front {
   z-index: 2;
   opacity: 1;
-  transition: opacity 0.32s var(--ease-luxury), transform 0.42s var(--ease-luxury);
+  transform-origin: 50% 56%;
+  transition: opacity 0.24s var(--ease-luxury);
 }
 
 .model-cutout--front.is-swapping-look {
   opacity: 0;
-  transform: scale(0.985);
 }
 
 /* Subtle champagne halo flash behind silhouette on outfit change */
@@ -823,17 +849,35 @@ img {
   100% { opacity: 0; transform: scale(1.22); }
 }
 
-/* Natural shadow directly under her heels on the Emporium porcelain floor */
+/* Realistic dual-layer floor contact shadow physically planting her heels on the porcelain tiles */
 .floor-contact-shadow {
-  width: 210px;
-  height: 22px;
-  margin-top: -26px;
-  margin-bottom: 4px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(16, 11, 8, 0.62) 0%, rgba(16, 11, 8, 0.24) 48%, transparent 75%);
-  filter: blur(5px);
+  position: relative;
+  width: 240px;
+  height: 26px;
+  margin-top: -32px;
+  margin-bottom: 6px;
   z-index: 10;
   pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+
+.shadow-core {
+  position: absolute;
+  width: 155px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(32, 24, 18, 0.52) 0%, rgba(32, 24, 18, 0.18) 55%, transparent 80%);
+  filter: blur(3px);
+}
+
+.shadow-ambient {
+  position: absolute;
+  width: 240px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(42, 32, 24, 0.24) 0%, transparent 72%);
+  filter: blur(8px);
 }
 
 /* Delicate 360° Floor Turntable Ring + Bidirectional Controls */
@@ -843,15 +887,23 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
   margin-top: -12px;
 }
 
 .turntable-svg {
-  width: 310px;
-  height: 44px;
+  width: 280px;
+  height: 36px;
   pointer-events: none;
-  margin-bottom: -28px;
+  margin-bottom: -24px;
+}
+
+.turntable-svg ellipse:first-child {
+  stroke: rgba(48, 38, 30, 0.24);
+}
+
+.turntable-svg #compassArc {
+  stroke: var(--terracotta);
 }
 
 #compassArc {
@@ -931,10 +983,11 @@ img {
 }
 
 .turntable-hint {
-  font-size: 10.5px;
-  color: rgba(250, 246, 239, 0.86);
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.72);
-  letter-spacing: 0.03em;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(34, 26, 20, 0.78);
+  text-shadow: 0 1px 6px rgba(255, 250, 244, 0.75);
+  letter-spacing: 0.02em;
 }
 
 /* Mobile Look Strip hidden on desktop */
@@ -1071,35 +1124,35 @@ img {
 }
 
 /* ==========================================================================
-   Bottom Floating VisionOS Inspector Bar
+   Bottom Floating VisionOS Inspector Bar (Compact & Refined)
    ========================================================================== */
 
 .inspector-bar {
   grid-column: 1 / -1;
   grid-row: 2;
   justify-self: center;
-  width: min(100%, 960px);
-  border-radius: 24px;
-  padding: 12px 16px;
+  width: min(100%, 780px);
+  border-radius: 20px;
+  padding: 8px 13px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 14px;
   z-index: 45;
 }
 
 .inspector-product {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 10px;
   min-width: 0;
-  flex: 1.15;
+  flex: 1.05;
 }
 
 .inspector-thumb {
-  width: 48px;
-  height: 58px;
-  border-radius: 12px;
+  width: 38px;
+  height: 46px;
+  border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(250, 246, 239, 0.2);
   flex-shrink: 0;
@@ -1120,12 +1173,12 @@ img {
 .inspector-title-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .inspector-name {
   font-family: var(--serif);
-  font-size: 24px;
+  font-size: 19px;
   font-weight: 500;
   line-height: 1.05;
   color: var(--ivory);
@@ -1135,8 +1188,8 @@ img {
 }
 
 .heart-btn {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -1146,8 +1199,8 @@ img {
 }
 
 .heart-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .heart-btn:hover,
@@ -1162,37 +1215,37 @@ img {
 .inspector-price-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 4px;
+  gap: 8px;
+  margin-top: 2px;
   flex-wrap: wrap;
 }
 
 .inspector-price-row strong {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--champagne);
 }
 
 .installment {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--ivory-mute);
 }
 
 .color-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 9px 2px 5px;
+  gap: 5px;
+  padding: 1px 8px 1px 4px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(250, 246, 239, 0.14);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--ivory-soft);
 }
 
 .swatch {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   display: inline-block;
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -1200,26 +1253,33 @@ img {
 
 .inspector-divider {
   width: 1px;
-  height: 44px;
+  height: 34px;
   background: var(--glass-border);
+  flex-shrink: 0;
+}
+
+.inspector-bottom-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   flex-shrink: 0;
 }
 
 .inspector-sizing {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .inspector-sizing__head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
-  font-size: 10.5px;
+  gap: 8px;
+  font-size: 9.5px;
   color: var(--ivory-mute);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
 }
 
 .inspector-sizing__head em {
@@ -1232,18 +1292,18 @@ img {
 
 .inspector-sizes {
   display: flex;
-  gap: 6px;
+  gap: 5px;
 }
 
 .insp-size-btn {
   position: relative;
-  min-width: 40px;
-  height: 32px;
-  padding: 0 10px;
-  border-radius: 10px;
+  min-width: 32px;
+  height: 27px;
+  padding: 0 7px;
+  border-radius: 8px;
   border: 1px solid var(--glass-border);
   background: rgba(255, 255, 255, 0.05);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--ivory-soft);
   transition: all 0.25s ease;
@@ -1264,10 +1324,10 @@ img {
 .insp-size-btn.is-rec::after {
   content: "";
   position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 5px;
-  height: 5px;
+  top: 3px;
+  right: 3px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: var(--terracotta);
 }
@@ -1283,9 +1343,7 @@ img {
 
 .inspector-cta {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
+  align-items: center;
   flex-shrink: 0;
 }
 
@@ -1293,38 +1351,34 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 12px 24px;
+  gap: 8px;
+  padding: 9px 18px;
   border-radius: 999px;
   background: linear-gradient(135deg, #f0d9be 0%, #cfa782 100%);
   color: var(--brand-ink);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  box-shadow: 0 10px 28px rgba(205, 165, 129, 0.34);
+  box-shadow: 0 8px 22px rgba(205, 165, 129, 0.3);
   transition: all 0.3s var(--ease-luxury);
+  white-space: nowrap;
 }
 
 .cta-whatsapp:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 34px rgba(205, 165, 129, 0.46);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(205, 165, 129, 0.42);
   filter: brightness(1.04);
 }
 
 .cta-whatsapp svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   transition: transform 0.3s var(--ease-luxury);
 }
 
 .cta-whatsapp:hover svg {
   transform: translateX(3px);
-}
-
-.cta-micro {
-  font-size: 9.5px;
-  color: var(--ivory-mute);
 }
 
 /* Drawer scrim for mobile measures bottom sheet */
@@ -1727,13 +1781,13 @@ img {
     height: 34px;
   }
 
-  /* Full-screen thumb-first vertical mobile layout */
+  /* Full-screen thumb-first vertical mobile layout — model stands grounded on boutique porcelain floor */
   .fitting-canvas {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 60px 12px calc(10px + env(safe-area-inset-bottom));
-    gap: 8px;
+    padding: 58px 10px calc(8px + env(safe-area-inset-bottom));
+    gap: 6px;
     height: 100dvh;
   }
 
@@ -1749,7 +1803,7 @@ img {
     bottom: 10px;
     top: auto;
     max-height: 82dvh;
-    border-radius: 26px;
+    border-radius: 24px;
     background: var(--glass-bg-deep);
     z-index: 85;
     opacity: 0;
@@ -1777,7 +1831,7 @@ img {
     display: grid;
   }
 
-  /* Free-standing Emporium model fills the upper-center boutique room */
+  /* Free-standing Emporium model stands tall and firmly planted on the glossy porcelain floor */
   .stage-center {
     flex: 1;
     min-height: 0;
@@ -1788,26 +1842,37 @@ img {
   }
 
   .model-cutout-wrap {
-    height: calc(100% - 48px);
-    max-height: 460px;
+    height: calc(100% - 40px);
+    max-height: 540px;
     width: auto;
   }
 
   .floor-contact-shadow {
-    width: 155px;
-    height: 16px;
-    margin-top: -18px;
+    width: 175px;
+    height: 18px;
+    margin-top: -22px;
+    margin-bottom: 2px;
+  }
+
+  .shadow-core {
+    width: 118px;
+    height: 9px;
+  }
+
+  .shadow-ambient {
+    width: 175px;
+    height: 18px;
   }
 
   .floor-turntable {
-    margin-top: -8px;
+    margin-top: -6px;
     gap: 2px;
   }
 
   .turntable-svg {
-    width: 230px;
-    height: 30px;
-    margin-bottom: -22px;
+    width: 210px;
+    height: 24px;
+    margin-bottom: -18px;
   }
 
   .turntable-controls {
@@ -1815,29 +1880,29 @@ img {
   }
 
   .turn-dir-btn {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
   }
 
   .turn-status-btn {
-    padding: 4px 9px;
-    font-size: 10.5px;
+    padding: 3px 8px;
+    font-size: 10px;
   }
 
   .turn-status-btn strong {
-    min-width: 82px;
+    min-width: 78px;
   }
 
   .turntable-hint {
-    font-size: 9.5px;
+    font-size: 9px;
   }
 
-  /* Mobile Horizontal Swipeable Look Strip (right above checkout bar) */
+  /* Slim Mobile Horizontal Look Strip */
   .mobile-look-strip {
     display: flex;
-    gap: 8px;
+    gap: 7px;
     overflow-x: auto;
-    padding: 2px 2px 2px;
+    padding: 1px 2px;
     scrollbar-width: none;
     flex-shrink: 0;
     z-index: 35;
@@ -1849,29 +1914,30 @@ img {
 
   .m-look-chip {
     flex: 0 0 auto;
-    width: 142px;
+    width: 132px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 5px 9px 5px 5px;
-    border-radius: 14px;
-    background: rgba(20, 16, 13, 0.64);
+    gap: 7px;
+    padding: 4px 8px 4px 4px;
+    border-radius: 12px;
+    background: rgba(24, 19, 15, 0.72);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(250, 246, 239, 0.14);
+    border: 1px solid rgba(250, 246, 239, 0.16);
     text-align: left;
     transition: all 0.25s ease;
   }
 
   .m-look-chip.is-active {
-    background: rgba(235, 210, 181, 0.2);
+    background: rgba(24, 19, 15, 0.86);
     border-color: var(--champagne);
+    box-shadow: 0 4px 14px rgba(20, 14, 10, 0.24);
   }
 
   .m-look-chip__img {
-    width: 36px;
-    height: 46px;
-    border-radius: 9px;
+    width: 30px;
+    height: 38px;
+    border-radius: 8px;
     overflow: hidden;
     flex-shrink: 0;
   }
@@ -1891,9 +1957,9 @@ img {
   .m-look-chip__txt strong {
     display: block;
     font-family: var(--serif);
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 500;
-    line-height: 1.08;
+    line-height: 1.06;
     color: var(--ivory);
     white-space: nowrap;
     overflow: hidden;
@@ -1902,70 +1968,84 @@ img {
 
   .m-look-chip__txt span {
     display: block;
-    margin-top: 2px;
+    margin-top: 1px;
     font-size: 9.5px;
     color: var(--champagne);
   }
 
-  /* Compact Bottom Checkout Inspector for Mobile */
+  /* Ultra-Compact 2-Row Mobile Bottom Bar (~86px tall instead of 178px!) */
   .inspector-bar {
     width: 100%;
-    border-radius: 20px;
-    padding: 10px 12px;
+    border-radius: 18px;
+    padding: 8px 11px;
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    gap: 7px;
     flex-shrink: 0;
   }
 
   .inspector-thumb,
   .inspector-divider,
   .installment,
-  .cta-micro {
+  .inspector-sizing__head {
     display: none;
   }
 
-  .inspector-name {
-    font-size: 19px;
-  }
-
-  .inspector-price-row {
-    margin-top: 2px;
-    gap: 8px;
-  }
-
-  .inspector-sizing {
-    flex-direction: row;
-    align-items: center;
+  .inspector-copy {
+    display: flex;
+    align-items: baseline;
     justify-content: space-between;
     gap: 8px;
   }
 
-  .inspector-sizing__head {
-    flex-direction: column;
-    gap: 1px;
-    font-size: 9.5px;
+  .inspector-title-row {
+    min-width: 0;
+    flex: 1;
   }
 
-  .inspector-sizing__head em {
-    font-size: 10px;
+  .inspector-name {
+    font-size: 16.5px;
+  }
+
+  .inspector-price-row {
+    margin-top: 0;
+    gap: 6px;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+  }
+
+  .inspector-price-row strong {
+    font-size: 13px;
+  }
+
+  .color-chip {
+    display: none;
+  }
+
+  .inspector-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .inspector-sizes {
+    gap: 4px;
   }
 
   .insp-size-btn {
-    min-width: 34px;
-    height: 30px;
-    padding: 0 7px;
+    min-width: 30px;
+    height: 28px;
+    padding: 0 6px;
     font-size: 11px;
   }
 
-  .inspector-cta {
-    align-items: stretch;
-  }
-
   .cta-whatsapp {
-    width: 100%;
-    padding: 11px 16px;
-    font-size: 11.5px;
+    padding: 8px 15px;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    gap: 6px;
   }
 
   .toast {
