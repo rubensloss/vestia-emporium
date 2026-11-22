@@ -200,7 +200,6 @@
   const dom = {
     modelStage: $('#modelStage'),
     modelCutoutWrap: $('#modelCutoutWrap'),
-    modelImgFront: $('#modelImgFront'),
     atelierFlash: $('#atelierFlash'),
     biotypeBanner: $('#biotypeBanner'),
     biotypeBannerText: $('#biotypeBannerText'),
@@ -252,6 +251,7 @@
   };
 
   let toastTimer = null;
+  let activeFrameNodes = [];
   const decodedCache = new Map();
 
   // Helpers
@@ -300,15 +300,26 @@
     return Math.round(d / step) % n;
   }
 
+  function mountLookFrames(look) {
+    activeFrameNodes.forEach((n) => n.remove());
+    activeFrameNodes = look.angles.map((a, i) => {
+      const img = document.createElement('img');
+      img.className = 'model-cutout' + (i === 0 ? ' is-current' : '');
+      img.src = a.src;
+      img.alt = `Modelo Emporium vestindo ${look.name} — ${a.label}`;
+      img.decoding = 'sync';
+      dom.modelCutoutWrap.appendChild(img);
+      return img;
+    });
+    state.renderedIndex = 0;
+  }
+
   function applySingleFigureFrame(look, idx) {
-    const angleObj = look.angles[idx];
-    if (!angleObj) return;
+    if (!activeFrameNodes[idx]) return;
     state.renderedIndex = idx;
-    // Instant single-figure swap — zero background ghost, zero double silhouette!
-    if (dom.modelImgFront.getAttribute('src') !== angleObj.src) {
-      dom.modelImgFront.src = angleObj.src;
-      dom.modelImgFront.alt = `Modelo Emporium vestindo ${look.name} — ${angleObj.label}`;
-    }
+    activeFrameNodes.forEach((node, i) => {
+      node.classList.toggle('is-current', i === idx);
+    });
   }
 
   function updateTurntableVisuals(look, deg, angleIdx) {
@@ -323,8 +334,8 @@
   }
 
   function applyKinetic3D(look, deg, idx) {
-    // Continuous sub-angle kinetic 3D perspective turn between frames:
-    // eliminates rigid freeze-and-snap "trancos" while keeping 100% single-figure crispness!
+    const activeNode = activeFrameNodes[idx];
+    if (!activeNode) return;
     const n = look.angles.length;
     const step = 360 / n;
     const slotCenter = idx * step;
@@ -332,13 +343,11 @@
     if (delta > 180) delta -= 360;
     if (delta < -180) delta += 360;
 
-    // Normalize phase t in [-1, 1] across each angle slot
     const t = Math.max(-1, Math.min(1, delta / (step * 0.5)));
-    // Subtle, organic perspective turn so transitions feel natural and fluid
-    const maxTilt = n >= 8 ? 8.0 : 10.5;
+    const maxTilt = n >= 8 ? 8.5 : 11.0;
     const rotY = (-t * maxTilt).toFixed(2);
     const scaleX = (1 - Math.abs(t) * 0.012).toFixed(4);
-    dom.modelImgFront.style.transform = `rotateY(${rotY}deg) scaleX(${scaleX})`;
+    activeNode.style.transform = `rotateY(${rotY}deg) scaleX(${scaleX})`;
   }
 
   function startBidirectionalShowcase({ pinned = false } = {}) {
@@ -608,19 +617,18 @@
 
     document.documentElement.style.setProperty('--accent-aura', nextLook.aura);
 
-    // Clean single-figure look swap with subtle champagne halo pulse (no double ghost!)
-    dom.modelImgFront.classList.add('is-swapping-look');
+    // Clean GPU-premounted look swap with subtle champagne halo pulse
+    dom.modelCutoutWrap.classList.add('is-swapping-look');
     dom.atelierFlash.classList.remove('is-flashing');
     void dom.atelierFlash.offsetWidth;
     dom.atelierFlash.classList.add('is-flashing');
 
     setTimeout(() => {
-      dom.modelImgFront.src = nextLook.angles[0].src;
-      dom.modelImgFront.alt = `Modelo Emporium vestindo ${nextLook.name}`;
+      mountLookFrames(nextLook);
       requestAnimationFrame(() => {
-        dom.modelImgFront.classList.remove('is-swapping-look');
+        dom.modelCutoutWrap.classList.remove('is-swapping-look');
       });
-    }, 110);
+    }, 100);
 
     // Update Bottom Inspector Bar
     dom.inspThumb.src = nextLook.thumb;
@@ -962,7 +970,7 @@
 
     const initial = LOOKS[0];
     document.documentElement.style.setProperty('--accent-aura', initial.aura);
-    dom.modelImgFront.src = initial.angles[0].src;
+    mountLookFrames(initial);
     dom.inspThumb.src = initial.thumb;
     dom.inspName.textContent = initial.name;
     dom.inspPrice.textContent = formatBRL(initial.price);
