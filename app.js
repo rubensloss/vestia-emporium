@@ -6,7 +6,7 @@
   'use strict';
 
   const EMPORIUM_WHATSAPP = '5527981512375';
-  const CUTOUT_VER = '?v=4';
+  const CUTOUT_VER = '?v=8';
 
   const LOOKS = [
     {
@@ -334,11 +334,10 @@
 
     // Normalize phase t in [-1, 1] across each angle slot
     const t = Math.max(-1, Math.min(1, delta / (step * 0.5)));
-    // Gentle perspective turn (max +-10deg on 8-angle hero, +-14deg on 4-angle looks)
-    const maxTilt = n >= 8 ? 10.5 : 14.5;
+    // Subtle, organic perspective turn so transitions feel natural and fluid
+    const maxTilt = n >= 8 ? 8.0 : 10.5;
     const rotY = (-t * maxTilt).toFixed(2);
-    // Subtle natural breathing/weight shift scale at transition midpoint
-    const scaleX = (1 - Math.abs(t) * 0.018).toFixed(4);
+    const scaleX = (1 - Math.abs(t) * 0.012).toFixed(4);
     dom.modelImgFront.style.transform = `rotateY(${rotY}deg) scaleX(${scaleX})`;
   }
 
@@ -366,11 +365,10 @@
     state.lastFrameTime = now;
     const look = getActiveLook();
 
-    // Fluid continuous runway rhythm: faster through side transitions so 8 angles blend organically,
-    // slowing smoothly ONLY when presenting Frente (0°) & Costas (180°) — zero robotic slideshow feel!
+    // Calm, slower, natural luxury runway pace (~7.5s per full 360° turn on 8-angle hero)
     const rad = (normDeg(state.currentDeg) * Math.PI) / 180;
-    const organicPace = 0.62 + 0.72 * Math.abs(Math.sin(rad));
-    const baseSpeed = look.angles.length >= 8 ? 88 : 68;
+    const organicPace = 0.72 + 0.44 * Math.abs(Math.sin(rad));
+    const baseSpeed = look.angles.length >= 8 ? 46 : 36;
     const autoSpeed = (baseSpeed * organicPace * dt) / 1000;
 
     if (state.autoMode === 'cw') {
@@ -380,7 +378,7 @@
         state.autoProgress = 0;
         state.autoNextDir = 'ccw';
         state.autoMode = 'pause';
-        state.autoPauseUntil = now + 620;
+        state.autoPauseUntil = now + 850;
       }
     } else if (state.autoMode === 'pause') {
       if (now >= state.autoPauseUntil) {
@@ -394,7 +392,7 @@
         state.autoProgress = 0;
         state.autoNextDir = 'cw';
         state.autoMode = 'pause';
-        state.autoPauseUntil = now + 620;
+        state.autoPauseUntil = now + 850;
       }
     } else if (!state.isDragging && Math.abs(state.dragVelocity) > 0.02) {
       // Silky inertial coast after releasing finger/mouse drag
@@ -403,10 +401,10 @@
       if (Math.abs(state.dragVelocity) <= 0.02) state.dragVelocity = 0;
     }
 
-    // Silky spring follow toward targetDeg
+    // Extra-smooth gentle spring follow
     const diff = state.targetDeg - state.currentDeg;
     if (Math.abs(diff) > 0.02) {
-      state.currentDeg += diff * (state.isDragging ? 0.30 : 0.16);
+      state.currentDeg += diff * (state.isDragging ? 0.24 : 0.105);
     } else {
       state.currentDeg = state.targetDeg;
     }
