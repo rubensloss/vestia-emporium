@@ -786,7 +786,7 @@ img {
 }
 
 .model-cutout-wrap.bio-curvy {
-  transform: scaleX(1.06) scaleY(1.01);
+  transform: none;
 }
 
 .model-cutout {

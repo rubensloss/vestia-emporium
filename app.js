@@ -254,6 +254,22 @@
   let activeFrameNodes = [];
   const decodedCache = new Map();
 
+  // Corpo Curvy / Plus: mesmos ângulos, gerados com IA (arquivos *p_*)
+  LOOKS.forEach((l) => {
+    l.anglesBase = l.angles;
+    l.anglesPlus = l.angles.map((a) => ({
+      ...a,
+      src: a.src.replace(/cutouts\/([a-z]\d)_/, 'cutouts/$1p_')
+    }));
+  });
+
+  function setBodySet(curvy) {
+    LOOKS.forEach((l) => {
+      l.angles = curvy ? l.anglesPlus : l.anglesBase;
+    });
+    mountLookFrames(getActiveLook());
+  }
+
   // Helpers
   const formatBRL = (v) => 'R$ ' + Number(v).toFixed(2).replace('.', ',');
   const formatHeight = (cm) => (cm / 100).toFixed(2).replace('.', ',') + ' m';
@@ -264,7 +280,7 @@
 
   function preloadAllCutouts() {
     LOOKS.forEach((look) => {
-      look.angles.forEach((a) => {
+      [...look.anglesBase, ...look.anglesPlus].forEach((a) => {
         if (decodedCache.has(a.src)) return;
         const img = new Image();
         img.src = a.src;
@@ -798,15 +814,16 @@
         state.biotype = btn.dataset.bio;
 
         dom.modelCutoutWrap.classList.remove('bio-petite', 'bio-curvy');
+        setBodySet(state.biotype === 'curvy');
         if (state.biotype === 'petite') {
           dom.modelCutoutWrap.classList.add('bio-petite');
           dom.biotypeBannerText.textContent =
-            'Proporção Petite (1,55m – 1,62m) · Na versão publicada, avatar dedicado com IA';
+            'Corpo Petite · 1,55 m · peças longas ficam mais compridas nela';
           dom.biotypeBanner.hidden = false;
         } else if (state.biotype === 'curvy') {
           dom.modelCutoutWrap.classList.add('bio-curvy');
           dom.biotypeBannerText.textContent =
-            'Proporção Curvy / Plus (G – GG) · Na versão publicada, avatar dedicado com IA';
+            'Corpo Curvy / Plus · G – GG · simulação com IA';
           dom.biotypeBanner.hidden = false;
         } else {
           dom.biotypeBanner.hidden = true;
