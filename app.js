@@ -263,6 +263,34 @@
     }));
   });
 
+  // Giro 360° contínuo (24 quadros, a cada 15°) extraído de vídeo da modelo girando
+  const SPIN_IDS = ['v1', 'v2', 'c1', 'c2', 'l1', 'l2'];
+  const SPIN_STEPS = 24;
+  const spinLabel = (deg) => {
+    if (deg === 0) return 'Frente';
+    if (deg === 180) return 'Costas';
+    if (deg === 90 || deg === 270) return 'Lateral';
+    if (deg < 90) return '3/4 Frente';
+    if (deg < 180) return '3/4 Costas';
+    if (deg < 270) return '3/4 Costas';
+    return '3/4 Frente';
+  };
+  const spinAngles = (prefix) =>
+    Array.from({ length: SPIN_STEPS }, (_, i) => {
+      const deg = (i * 360) / SPIN_STEPS;
+      return {
+        deg,
+        label: spinLabel(deg),
+        src: `img/cutouts/${prefix}_${String(deg).padStart(3, '0')}.webp${CUTOUT_VER}`
+      };
+    });
+  LOOKS.forEach((l) => {
+    if (!SPIN_IDS.includes(l.id)) return;
+    l.anglesBase = spinAngles(`s_${l.id}`);
+    l.anglesPlus = spinAngles(`s_${l.id}p`);
+    l.angles = l.anglesBase;
+  });
+
   function setBodySet(curvy) {
     LOOKS.forEach((l) => {
       l.angles = curvy ? l.anglesPlus : l.anglesBase;
@@ -278,18 +306,22 @@
     state.category === 'all' ? LOOKS : LOOKS.filter((l) => l.cat === state.category);
   const getActiveLook = () => LOOKS.find((l) => l.id === state.activeId) || LOOKS[0];
 
-  function preloadAllCutouts() {
-    LOOKS.forEach((look) => {
-      [...look.anglesBase, ...look.anglesPlus].forEach((a) => {
-        if (decodedCache.has(a.src)) return;
-        const img = new Image();
-        img.src = a.src;
-        if (img.decode) {
-          img.decode().catch(() => {});
-        }
-        decodedCache.set(a.src, img);
-      });
+  function preloadLook(look) {
+    [...look.anglesBase, ...look.anglesPlus].forEach((a) => {
+      if (decodedCache.has(a.src)) return;
+      const img = new Image();
+      img.src = a.src;
+      if (img.decode) {
+        img.decode().catch(() => {});
+      }
+      decodedCache.set(a.src, img);
     });
+  }
+
+  function preloadAllCutouts() {
+    // Peça ativa primeiro; as demais depois, para não pesar a abertura no celular
+    preloadLook(getActiveLook());
+    setTimeout(() => LOOKS.forEach(preloadLook), 2500);
   }
 
   function showToast(msg) {
@@ -360,7 +392,7 @@
     if (delta < -180) delta += 360;
 
     const t = Math.max(-1, Math.min(1, delta / (step * 0.5)));
-    const maxTilt = n >= 8 ? 8.5 : 11.0;
+    const maxTilt = n >= 16 ? 3.0 : n >= 8 ? 8.5 : 11.0;
     const rotY = (-t * maxTilt).toFixed(2);
     const scaleX = (1 - Math.abs(t) * 0.012).toFixed(4);
     activeNode.style.transform = `rotateY(${rotY}deg) scaleX(${scaleX})`;
