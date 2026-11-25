@@ -824,42 +824,80 @@
       else stopBidirectionalShowcase();
     });
 
+    // Corpo exibido: troca as fotos, a faixa de aviso e o destaque na lista
+    function applyBiotype(bio) {
+      if (state.biotype === bio) return;
+      state.biotype = bio;
+      $$('#biotypeList .biotype-opt').forEach((b) =>
+        b.classList.toggle('is-active', b.dataset.bio === bio)
+      );
+      dom.modelCutoutWrap.classList.remove('bio-petite', 'bio-curvy');
+      setBodySet(bio === 'curvy');
+      if (bio === 'petite') {
+        dom.modelCutoutWrap.classList.add('bio-petite');
+        dom.biotypeBannerText.textContent =
+          'Corpo Petite · 1,55 m · peças longas ficam mais compridas nela';
+        dom.biotypeBanner.hidden = false;
+      } else if (bio === 'curvy') {
+        dom.modelCutoutWrap.classList.add('bio-curvy');
+        dom.biotypeBannerText.textContent = 'Corpo Curvy / Plus · G – GG · simulação com IA';
+        dom.biotypeBanner.hidden = false;
+      } else {
+        dom.biotypeBanner.hidden = true;
+      }
+    }
+
+    // Corpo mais parecido com as medidas que a cliente informou
+    function bodyFromMeasures() {
+      if (state.manequim === 'G' || state.manequim === 'GG') return 'curvy';
+      if (state.heightCm <= 160) return 'petite';
+      return 'modelo';
+    }
+
+    function setManequim(size) {
+      const btn = $$('#manequimPills button').find((b) => b.dataset.size === size);
+      if (!btn) return;
+      $$('#manequimPills button').forEach((b) => b.classList.toggle('is-active', b === btn));
+      state.manequim = btn.dataset.size;
+      state.manequimNum = btn.dataset.num;
+    }
+
+    function setHeight(cm) {
+      state.heightCm = cm;
+      dom.heightSlider.value = String(cm);
+    }
+
     dom.heightSlider.addEventListener('input', (e) => {
       state.heightCm = Number(e.target.value);
+      applyBiotype(bodyFromMeasures());
       updateFitIntelligence();
     });
 
     $$('#manequimPills button').forEach((btn) => {
       btn.addEventListener('click', () => {
-        $$('#manequimPills button').forEach((b) => b.classList.remove('is-active'));
-        btn.classList.add('is-active');
-        state.manequim = btn.dataset.size;
-        state.manequimNum = btn.dataset.num;
+        setManequim(btn.dataset.size);
+        applyBiotype(bodyFromMeasures());
         updateFitIntelligence();
       });
     });
 
+    // Escolher o corpo na mão também ajusta as medidas, para o tamanho sugerido bater
     $$('#biotypeList .biotype-opt').forEach((btn) => {
       btn.addEventListener('click', () => {
-        $$('#biotypeList .biotype-opt').forEach((b) => b.classList.remove('is-active'));
-        btn.classList.add('is-active');
-        state.biotype = btn.dataset.bio;
-
-        dom.modelCutoutWrap.classList.remove('bio-petite', 'bio-curvy');
-        setBodySet(state.biotype === 'curvy');
-        if (state.biotype === 'petite') {
-          dom.modelCutoutWrap.classList.add('bio-petite');
-          dom.biotypeBannerText.textContent =
-            'Corpo Petite · 1,55 m · peças longas ficam mais compridas nela';
-          dom.biotypeBanner.hidden = false;
-        } else if (state.biotype === 'curvy') {
-          dom.modelCutoutWrap.classList.add('bio-curvy');
-          dom.biotypeBannerText.textContent =
-            'Corpo Curvy / Plus · G – GG · simulação com IA';
-          dom.biotypeBanner.hidden = false;
-        } else {
-          dom.biotypeBanner.hidden = true;
+        const bio = btn.dataset.bio;
+        const order = ['PP', 'P', 'M', 'G', 'GG'];
+        const idx = order.indexOf(state.manequim);
+        if (bio === 'curvy' && idx < 3) setManequim('G');
+        if (bio === 'petite') {
+          if (idx > 2) setManequim('P');
+          if (state.heightCm > 160) setHeight(155);
         }
+        if (bio === 'modelo') {
+          if (idx > 2) setManequim('M');
+          if (state.heightCm <= 160) setHeight(166);
+        }
+        applyBiotype(bio);
+        updateFitIntelligence();
       });
     });
 
