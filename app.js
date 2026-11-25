@@ -321,7 +321,13 @@
   function preloadAllCutouts() {
     // Peça ativa primeiro; as demais depois, para não pesar a abertura no celular
     preloadLook(getActiveLook());
-    setTimeout(() => LOOKS.forEach(preloadLook), 2500);
+    const rest = LOOKS.filter((l) => l !== getActiveLook());
+    const next = () => {
+      const l = rest.shift(); if (!l) return;
+      preloadLook(l);
+      (window.requestIdleCallback || ((f) => setTimeout(f, 1200)))(() => setTimeout(next, 900));
+    };
+    setTimeout(next, 4000);
   }
 
   function showToast(msg) {
@@ -333,7 +339,7 @@
 
   function defaultHintText() {
     return window.innerWidth <= 960
-      ? 'Arraste para girar 360° · dois toques para dar zoom'
+      ? 'Arraste para girar 360° · pinça com dois dedos para zoom'
       : 'Arraste para girar 360° · rodinha do mouse para zoom';
   }
 
@@ -510,6 +516,11 @@
       stage.classList.toggle('is-zoomed', Z.z > 1);
     };
     window.__resetZoom = () => { Z.z = 1; applyZoom(); };
+    const zoomBtn = document.createElement('button');
+    zoomBtn.type = 'button'; zoomBtn.className = 'zoom-reset'; zoomBtn.textContent = 'Voltar ao tamanho normal';
+    zoomBtn.addEventListener('pointerdown', (ev) => ev.stopPropagation());
+    zoomBtn.addEventListener('click', (ev) => { ev.stopPropagation(); window.__resetZoom(); });
+    stage.appendChild(zoomBtn);
     const zoomAt = (nz, cx, cy) => {
       const r = dom.modelCutoutWrap.getBoundingClientRect();
       // ponto sob o dedo/mouse, medido a partir do centro original da modelo
@@ -525,18 +536,13 @@
       zoomAt(Z.z * (e.deltaY < 0 ? 1.15 : 1 / 1.15), e.clientX, e.clientY);
     }, { passive: false });
     stage.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('.turntable-controls')) return;
+      if (e.target.closest('.turntable-controls') || e.target.closest('.zoom-reset')) return;
       Z.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (Z.ptrs.size === 2) {
         const [a, b] = [...Z.ptrs.values()];
         Z.pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), z: Z.z };
         state.isDragging = false; state.dragMoved = true; return;
       }
-      const now = performance.now();
-      if (e.pointerType === 'touch' && now - Z.lastTap < 300) {
-        zoomAt(Z.z > 1 ? 1 : 2.2, e.clientX, e.clientY); Z.lastTap = 0; state.dragMoved = true; return;
-      }
-      Z.lastTap = now;
       if (Z.z > 1) {
         Z.pan = { x: e.clientX, y: e.clientY, ox: Z.x, oy: Z.y }; state.dragMoved = false;
         try { stage.setPointerCapture(e.pointerId); } catch (_) {}
@@ -989,10 +995,21 @@
     });
     // Capa: "Começar" fecha a capa e já pede as medidas
     const hideIntro = () => $('#intro').classList.add('is-hidden');
+    $$('#introSizes button').forEach((b) => b.addEventListener('click', () => {
+      $$('#introSizes button').forEach((x) => x.classList.toggle('is-on', x === b));
+    }));
+    $('#introHeight').addEventListener('input', (e) => {
+      $('#introHval').textContent = formatHeight(Number(e.target.value));
+    });
     $('#introStart').addEventListener('click', () => {
+      const on = $('#introSizes .is-on');
+      const size = on ? on.dataset.size : 'M';
+      const cm = Number($('#introHeight').value);
+      dom.heightSlider.value = String(cm);
+      dom.heightSlider.dispatchEvent(new Event('input', { bubbles: true }));
+      const pill = $$('#manequimPills button').find((p) => p.dataset.size === size);
+      if (pill) pill.click();
       hideIntro();
-      if (window.innerWidth <= 960) setTimeout(() => setProfileDrawer(true), 520);
-      else showToast('Ajuste sua altura e manequim no painel à esquerda');
     });
     $('#introSkip').addEventListener('click', hideIntro);
 

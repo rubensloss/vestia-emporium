@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=11" />
+  <link rel="stylesheet" href="styles.css?v=15" />
 </head>
 <body>
   <!-- Sculptural Emporium Terracotta-Bronze Silk Editorial Backdrop -->
@@ -39,12 +39,17 @@
       <span class="intro__eyebrow">Emporium · Moda Feminina</span>
       <h1 class="intro__title">Prove antes<br /><em>de comprar.</em></h1>
       <p class="intro__lead">Veja cada peça girando em 360°, no corpo mais parecido com o seu.</p>
-      <ol class="intro__steps">
-        <li><span>1</span>Informe sua altura e manequim</li>
-        <li><span>2</span>Gire a modelo com o dedo</li>
-        <li><span>3</span>Gostou? Peça direto no WhatsApp</li>
-      </ol>
-      <button class="intro__cta" id="introStart">Começar</button>
+      <div class="intro__q">
+        <span class="intro__ql">Seu manequim</span>
+        <div class="intro__pills" id="introSizes">
+          <button type="button" data-size="PP">PP</button><button type="button" data-size="P">P</button><button type="button" data-size="M" class="is-on">M</button><button type="button" data-size="G">G</button><button type="button" data-size="GG">GG</button>
+        </div>
+      </div>
+      <div class="intro__q">
+        <span class="intro__ql">Sua altura <b id="introHval">1,66 m</b></span>
+        <input type="range" id="introHeight" min="150" max="184" value="166" step="1" />
+      </div>
+      <button class="intro__cta" id="introStart">Ver em mim</button>
       <button class="intro__skip" id="introSkip">Só quero ver a coleção</button>
     </div>
   </section>
@@ -458,6 +463,6 @@
   <!-- Toast feedback -->
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=15"></script>
 </body>
 </html>

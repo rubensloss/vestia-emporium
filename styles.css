@@ -141,10 +141,8 @@ img {
   display: grid;
   place-items: center;
   padding: 24px 16px;
-  background: radial-gradient(ellipse at 50% 40%, rgba(31, 24, 19, 0.55) 0%, rgba(20, 16, 13, 0.92) 70%);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  transition: opacity 0.5s var(--ease-luxury), visibility 0.5s;
+  background: radial-gradient(ellipse at 50% 40%, rgba(31, 24, 19, 0.86) 0%, rgba(20, 16, 13, 0.97) 70%);
+  transition: opacity 0.35s ease, visibility 0.35s;
 }
 
 .intro.is-hidden {
@@ -2179,3 +2177,28 @@ img {
 .model-cutout.is-current { transition: none; }
 .model-cutout-wrap { transition: transform 0.55s var(--ease-luxury), scale 0.18s ease-out, translate 0.12s ease-out; }
 .model-free-stage.is-zoomed { cursor: move; }
+
+.zoom-reset {
+  position: absolute; left: 50%; top: 10px; transform: translateX(-50%);
+  z-index: 40; display: none;
+  padding: 9px 16px; border-radius: 999px;
+  background: rgba(18, 14, 11, 0.82); border: 1px solid rgba(235, 210, 181, 0.4);
+  color: var(--champagne); font-size: 12.5px; font-weight: 600;
+}
+.model-free-stage.is-zoomed .zoom-reset { display: block; }
+
+/* Celular: sem desfoque de vidro nem sombra recalculada a cada quadro (giro leve) */
+@media (max-width: 960px), (pointer: coarse) {
+  :root { --glass-bg: rgba(20, 16, 13, 0.9); --glass-bg-deep: rgba(18, 14, 12, 0.95); }
+  *, *::before, *::after { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .model-cutout { filter: none; }
+}
+
+.intro__q { margin: 0 auto 16px; max-width: 300px; text-align: left; }
+.intro__ql { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ivory-soft); margin-bottom: 8px; }
+.intro__ql b { color: var(--champagne); font-weight: 600; }
+.intro__pills { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.intro__pills button { padding: 10px 0; border-radius: 10px; border: 1px solid var(--glass-border); color: var(--ivory); font-weight: 600; font-size: 13px; background: rgba(255,255,255,0.04); }
+.intro__pills button.is-on { background: var(--champagne); color: var(--brand-ink); border-color: var(--champagne); }
+#introHeight { width: 100%; accent-color: var(--champagne); height: 28px; }
+.intro__lead { margin-bottom: 18px; }
