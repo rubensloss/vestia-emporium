@@ -6,7 +6,7 @@
   'use strict';
 
   const EMPORIUM_WHATSAPP = '5527981512375';
-  const CUTOUT_VER = '?v=9';
+  const CUTOUT_VER = '?v=10';
 
   const LOOKS = [
     {
