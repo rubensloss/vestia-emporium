@@ -6,7 +6,7 @@
   'use strict';
 
   const EMPORIUM_WHATSAPP = '5527981512375';
-  const CUTOUT_VER = '?v=10';
+  const CUTOUT_VER = '?v=11';
 
   const LOOKS = [
     {
@@ -400,7 +400,7 @@
 
   function startBidirectionalShowcase({ pinned = false } = {}) {
     state.autoMode = 'cw';
-    state.autoNextDir = 'ccw';
+    state.autoNextDir = 'cw'; // sempre no mesmo sentido: volta inteira, sem "vai e volta"
     state.autoProgress = 0;
     state.autoPinned = pinned;
     state.dragVelocity = 0;
@@ -433,7 +433,7 @@
       state.autoProgress += autoSpeed;
       if (state.autoProgress >= 360) {
         state.autoProgress = 0;
-        state.autoNextDir = 'ccw';
+        state.autoNextDir = 'cw';
         state.autoMode = 'pause';
         state.autoPauseUntil = now + 850;
       }
