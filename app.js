@@ -6,7 +6,7 @@
   'use strict';
 
   const EMPORIUM_WHATSAPP = '5527981512375';
-  const CUTOUT_VER = '?v=8';
+  const CUTOUT_VER = '?v=9';
 
   const LOOKS = [
     {
@@ -932,6 +932,15 @@
         showToast('Ajuste sua altura e manequim no painel à esquerda');
       }
     });
+    // Capa: "Começar" fecha a capa e já pede as medidas
+    const hideIntro = () => $('#intro').classList.add('is-hidden');
+    $('#introStart').addEventListener('click', () => {
+      hideIntro();
+      if (window.innerWidth <= 960) setTimeout(() => setProfileDrawer(true), 520);
+      else showToast('Ajuste sua altura e manequim no painel à esquerda');
+    });
+    $('#introSkip').addEventListener('click', hideIntro);
+
     $('#closeProfileMobile').addEventListener('click', () => setProfileDrawer(false));
     dom.drawerScrim.addEventListener('click', () => setProfileDrawer(false));
 
