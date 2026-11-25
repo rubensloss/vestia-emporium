@@ -2174,3 +2174,8 @@ img {
     font-size: 11.5px;
   }
 }
+
+/* Quadro novo entra inteiro na hora (sem o "brilho" da troca) */
+.model-cutout.is-current { transition: none; }
+.model-cutout-wrap { transition: transform 0.55s var(--ease-luxury), scale 0.18s ease-out, translate 0.12s ease-out; }
+.model-free-stage.is-zoomed { cursor: move; }

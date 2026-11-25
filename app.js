@@ -333,8 +333,8 @@
 
   function defaultHintText() {
     return window.innerWidth <= 960
-      ? 'Arraste devagar sobre a modelo ou toque para girar 360°'
-      : 'Passe o mouse para giro 360° · Arraste para controlar';
+      ? 'Arraste para girar 360° · dois toques para dar zoom'
+      : 'Arraste para girar 360° · rodinha do mouse para zoom';
   }
 
   // ========================================================================
@@ -500,8 +500,48 @@
     });
 
     // Zero-friction pointer capture on Mobile & Desktop so the very first drag pixel responds smoothly!
+    /* ZOOM */
+    const Z = { z: 1, x: 0, y: 0, ptrs: new Map(), pinch: null, pan: null, lastTap: 0 };
+    const applyZoom = () => {
+      if (Z.z <= 1.01) { Z.z = 1; Z.x = 0; Z.y = 0; }
+      const w = dom.modelCutoutWrap;
+      w.style.scale = String(Z.z);
+      w.style.translate = `${Z.x}px ${Z.y}px`;
+      stage.classList.toggle('is-zoomed', Z.z > 1);
+    };
+    window.__resetZoom = () => { Z.z = 1; applyZoom(); };
+    const zoomAt = (nz, cx, cy) => {
+      const r = dom.modelCutoutWrap.getBoundingClientRect();
+      // ponto sob o dedo/mouse, medido a partir do centro original da modelo
+      const ox = cx - (r.left + r.width / 2) + Z.x, oy = cy - (r.top + r.height / 2) + Z.y;
+      nz = Math.max(1, Math.min(3, nz));
+      const k = nz / Z.z;
+      Z.x = (Z.x - ox) * k + ox; Z.y = (Z.y - oy) * k + oy; Z.z = nz;
+      if (state.autoMode !== 'idle') stopBidirectionalShowcase();
+      applyZoom();
+    };
+    stage.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      zoomAt(Z.z * (e.deltaY < 0 ? 1.15 : 1 / 1.15), e.clientX, e.clientY);
+    }, { passive: false });
     stage.addEventListener('pointerdown', (e) => {
       if (e.target.closest('.turntable-controls')) return;
+      Z.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (Z.ptrs.size === 2) {
+        const [a, b] = [...Z.ptrs.values()];
+        Z.pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), z: Z.z };
+        state.isDragging = false; state.dragMoved = true; return;
+      }
+      const now = performance.now();
+      if (e.pointerType === 'touch' && now - Z.lastTap < 300) {
+        zoomAt(Z.z > 1 ? 1 : 2.2, e.clientX, e.clientY); Z.lastTap = 0; state.dragMoved = true; return;
+      }
+      Z.lastTap = now;
+      if (Z.z > 1) {
+        Z.pan = { x: e.clientX, y: e.clientY, ox: Z.x, oy: Z.y }; state.dragMoved = false;
+        try { stage.setPointerCapture(e.pointerId); } catch (_) {}
+        return;
+      }
       state.isDragging = true;
       state.dragPointerId = e.pointerId;
       state.dragStartX = e.clientX;
@@ -514,6 +554,17 @@
     });
 
     stage.addEventListener('pointermove', (e) => {
+      if (Z.ptrs.has(e.pointerId)) Z.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (Z.pinch && Z.ptrs.size === 2) {
+        const [a, b] = [...Z.ptrs.values()];
+        zoomAt(Z.pinch.z * Math.hypot(a.x - b.x, a.y - b.y) / Z.pinch.d, (a.x + b.x) / 2, (a.y + b.y) / 2);
+        return;
+      }
+      if (Z.pan) {
+        Z.x = Z.pan.ox + (e.clientX - Z.pan.x); Z.y = Z.pan.oy + (e.clientY - Z.pan.y);
+        if (Math.abs(e.clientX - Z.pan.x) + Math.abs(e.clientY - Z.pan.y) > 4) state.dragMoved = true;
+        applyZoom(); return;
+      }
       if (!state.isDragging || e.pointerId !== state.dragPointerId) return;
       const dx = e.clientX - state.dragLastX;
       state.dragLastX = e.clientX;
@@ -534,6 +585,9 @@
     });
 
     const endDrag = (e) => {
+      Z.ptrs.delete(e.pointerId);
+      if (Z.ptrs.size < 2) Z.pinch = null;
+      if (Z.pan && Z.ptrs.size === 0) { Z.pan = null; try { stage.releasePointerCapture(e.pointerId); } catch (_) {} }
       if (!state.isDragging || e.pointerId !== state.dragPointerId) return;
       state.isDragging = false;
       state.dragPointerId = null;
@@ -658,6 +712,7 @@
     }
 
     stopBidirectionalShowcase();
+    if (window.__resetZoom) window.__resetZoom();
     state.activeId = id;
     state.currentDeg = 0;
     state.targetDeg = 0;
